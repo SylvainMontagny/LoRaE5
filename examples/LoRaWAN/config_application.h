@@ -3,9 +3,9 @@
 
 #define ACTIVATION_MODE     		OTAA
 #define CLASS						        CLASS_A
-#define SPREADING_FACTOR    		12
-#define ADAPTIVE_DR         		true
-#define CONFIRMED           		true
+#define SPREADING_FACTOR    		7
+#define ADAPTIVE_DR         		false
+#define CONFIRMED           		false
 #define PORT                		15
 
 #define SEND_BY_PUSH_BUTTON 		false
@@ -15,13 +15,13 @@
 #define CAYENNE_LPP_         		false
 #define LOW_POWER           		false
 
-const char devEUI[] = "70B3D57ED005ADFE";
+const char devEUI[] = "0000000000000000";
 
 // Configuration for ABP Activation Mode
-const char devAddr[] = "260BF055";
-const char nwkSKey[] = "FD3B51331776AE8374B7764512871E8E";
-const char appSKey[] = "FFAE2922DCB659789C896BDD479B5F1A";
+const char devAddr[] = "00000000";
+const char nwkSKey[] = "00000000000000000000000000000000";
+const char appSKey[] = "00000000000000000000000000000000";
 
 // Configuration for OTAA Activation Mode
-const char appKey[] = "3477563246F9BAF537FBE195A3931AF3"; 
+const char appKey[] = "00000000000000000000000000000000"; 
 const char appEUI[] = "0000000000000000";
