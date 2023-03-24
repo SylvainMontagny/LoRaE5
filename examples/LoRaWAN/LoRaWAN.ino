@@ -1,4 +1,4 @@
-#include <arduino.h>
+#include <Arduino.h>
 #include <lorae5.h>
 #include "config_application.h"
 
