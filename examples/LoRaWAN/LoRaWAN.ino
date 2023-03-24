@@ -1,39 +1,42 @@
 #include <Arduino.h>
-#include <lorae5.h>
+#include "lorae5.h"
 #include "config_application.h"
 
-
-LoraE5 loraE5(SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT, SEND_BY_PUSH_BUTTON, FRAME_DELAY, PAYLOAD_HELLO, ACTIVATION_MODE, devEUI, devAddr, nwkSKey, appSKey, appKey, appEUI); // init LoRaE5
+LoraE5 LoRaE5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey); 
 
 void setup() {
-  Serial1.begin(9600);
-  Serial.begin(9600);
-  while (!Serial);        // wait for serial port to connect.
-  Serial.println("\n\n\n\n\n\n\n\n\n\n\r");
-  Serial.println("# LoRaWAN Training Session #");
-  Serial.println("######## LoRa E5 HT ########");
+  LoRa_Serial.begin(9600);
+  USB_Serial.begin(9600);
+  while (!USB_Serial);
+  USB_Serial.println("\r\n\n\n\n\n\n\n\n");
+  USB_Serial.println("#######################################");
+  USB_Serial.println("#### LoRaWAN Training Session #########");
+  USB_Serial.println("#### Savoie Mont Blanc University #####\r\n");
   
-  loraE5.setDR(SPREADING_FACTOR);
-  loraE5.setADR(ADAPTIVE_DR);
+  while(!LoRaE5.checkBoard());
+
+  LoRaE5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT);
+  LoRaE5.printInfo(SEND_BY_PUSH_BUTTON, FRAME_DELAY, LOW_POWER);
+
 
   if(ACTIVATION_MODE == OTAA){
-    loraE5.setMode(OTAA);
-    loraE5.setDevEUI(devEUI);
-    loraE5.setAppEUI(appEUI);
-    loraE5.setAppKey(appKey);
-    loraE5.join();
-  }
+    LoRaE5.setDevEUI(devEUI);
+    LoRaE5.setAppEUI(appEUI);
+    LoRaE5.setAppKey(appKey);
+    USB_Serial.println("\r\nJoin Procedure in progress...");
+    while(LoRaE5.join() == false);
+    delay(3000);
+   }
   
  if(ACTIVATION_MODE == ABP){
-   loraE5.setMode(ABP);
-   loraE5.setDevAddr(devAddr);
-   loraE5.setNwkSKey(nwkSKey);
-   loraE5.setAppSKey(appSKey);
+   LoRaE5.setDevAddr(devAddr);
+   LoRaE5.setNwkSKey(nwkSKey);
+   LoRaE5.setAppSKey(appSKey);
  }
-  
 }
 
 void loop() {
-  loraE5.sendMsg(CONFIRMED,"HELLO");
-   delay(10000);
+  LoRaE5.sendMsg(STRING, "HELLO");
+  //LoRaE5.sendMsg(HEX, "AA22BB33");
+  delay(FRAME_DELAY-10000);
 }

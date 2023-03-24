@@ -1,27 +1,25 @@
-#define ABP                     0 
-#define OTAA     		            1
 
-#define ACTIVATION_MODE     		OTAA
+#define ACTIVATION_MODE     		ABP
 #define CLASS						        CLASS_A
 #define SPREADING_FACTOR    		7
-#define ADAPTIVE_DR         		false
+#define ADAPTIVE_DR         		true
 #define CONFIRMED           		false
 #define PORT                		15
 
 #define SEND_BY_PUSH_BUTTON 		false
 #define FRAME_DELAY         		10000
-#define PAYLOAD_HELLO				    true
-#define PAYLOAD_TEMPERATURE    	false
-#define CAYENNE_LPP_         		false
+//#define PAYLOAD_HELLO				    true
+//#define PAYLOAD_TEMPERATURE    	false
+//#define CAYENNE_LPP_         		false
 #define LOW_POWER           		false
 
-const char devEUI[] = "0000000000000000";
+String devEUI = "0080E115000A9BD2";
 
 // Configuration for ABP Activation Mode
-const char devAddr[] = "00000000";
-const char nwkSKey[] = "00000000000000000000000000000000";
-const char appSKey[] = "00000000000000000000000000000000";
+String devAddr = "260BBBD3";
+String nwkSKey = "373BA906ED0C9EAB45767AC4F0454809";
+String appSKey = "DA20768C7183F2011F41EF637CA70814";
 
 // Configuration for OTAA Activation Mode
-const char appKey[] = "00000000000000000000000000000000"; 
-const char appEUI[] = "0000000000000000";
+String appKey = "BC673B8F4431ACE4A7B8412209AE1C45"; 
+String appEUI = "0000000000000000";
