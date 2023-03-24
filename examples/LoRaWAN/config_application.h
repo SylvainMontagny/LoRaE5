@@ -13,13 +13,13 @@
 //#define CAYENNE_LPP_         		false
 #define LOW_POWER           		false
 
-String devEUI = "0080E115000A9BD2";
+String devEUI = "0000000000000000";
 
 // Configuration for ABP Activation Mode
-String devAddr = "260BBBD3";
-String nwkSKey = "373BA906ED0C9EAB45767AC4F0454809";
-String appSKey = "DA20768C7183F2011F41EF637CA70814";
+String devAddr = "00000000";
+String nwkSKey = "00000000000000000000000000000000";
+String appSKey = "00000000000000000000000000000000";
 
 // Configuration for OTAA Activation Mode
-String appKey = "BC673B8F4431ACE4A7B8412209AE1C45"; 
+String appKey = "00000000000000000000000000000000"; 
 String appEUI = "0000000000000000";
