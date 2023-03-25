@@ -1,8 +1,8 @@
 # 1. Learn more about LoRaWAN
-Savoie Mont Blanc University provides many educationnal ressources about LoRaWAN :
-> :notebook: [LoRaWAN for beginers books](https://www.univ-smb.fr/lorawan/en/free-book/)
-> :tv: [LoRaWAN for beginers videos](https://www.udemy.com/course/lora-lorawan-internet-of-things/?referralCode=21DED0F1021F4E261955)
-> :bulb: [LoRaWAN and IoT Training] (https://www.univ-smb.fr/lorawan/avada_portfolio/formation-distanciel/)
+Savoie Mont Blanc University provides many educationnal ressources about LoRaWAN:
+:notebook: One free ebook available here:[LoRaWAN for beginers books](https://www.univ-smb.fr/lorawan/en/free-book/)
+:tv: E-learning platform available here: [LoRaWAN for beginers videos](https://www.udemy.com/course/lora-lorawan-internet-of-things/?referralCode=21DED0F1021F4E261955)
+:bulb: 2 days training sessions available here: [LoRaWAN and IoT Training] (https://www.univ-smb.fr/lorawan/avada_portfolio/formation-distanciel/)
 
 # 2. About this Arduino library
 This Arduino Library communicates with the [LoRa-E5 LoRaWAN module](https://wiki.seeedstudio.com/Grove_LoRa_E5_New_Version/). The configuration is made thanks to a unique file called config_application. Here a are the possible configuration :
