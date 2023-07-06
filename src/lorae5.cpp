@@ -121,10 +121,10 @@ bool LoraE5::join(){
 
 void LoraE5::sendMsg(bool msgType, String payload){
   USB_Serial.println("");
-  if(msgType == HEX)    USB_Serial.println("Send hexadecimal message : " + payload);
-  if(msgType == STRING) USB_Serial.println("Send string message : \"" + payload + String("\""));
+  if(msgType == _HEXA)    USB_Serial.println("Send hexadecimal message : " + payload );
+  if(msgType == _STRING) USB_Serial.println("Send string message : \"" + payload + String("\"") );
 
-LoRa_Serial.println("AT+" + String(this->confirmed? "C":"") + String("MSG") + String((msgType==HEX)?"HEX":"") + String("=") + payload);
+LoRa_Serial.println("AT+" + String(this->confirmed? "C":"") + String("MSG") + String((msgType==_HEXA)?"HEX":"") + String("=") + payload);
 readResponse(10000,DEBUG);
 }
 

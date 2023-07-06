@@ -14,8 +14,8 @@
 #define CONF                    true
 #define UNCONF                  false
 
-#define HEX                     0
-#define STRING                  1                                       
+#define _HEXA                     0
+#define _STRING                  1                                       
 
 
 class LoraE5{
