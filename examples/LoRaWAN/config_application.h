@@ -2,16 +2,12 @@
 #define ACTIVATION_MODE     		ABP
 #define CLASS						        CLASS_A
 #define SPREADING_FACTOR    		7
-#define ADAPTIVE_DR         		true
+#define ADAPTIVE_DR         		false
 #define CONFIRMED           		false
 #define PORT                		15
 
 #define SEND_BY_PUSH_BUTTON 		false
-#define FRAME_DELAY         		10000
-//#define PAYLOAD_HELLO				    true
-//#define PAYLOAD_TEMPERATURE    	false
-//#define CAYENNE_LPP_         		false
-#define LOW_POWER           		false
+#define FRAME_DELAY         		12000
 
 String devEUI = "0000000000000000";
 

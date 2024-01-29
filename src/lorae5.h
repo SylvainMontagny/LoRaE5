@@ -18,13 +18,19 @@
 #define _STRING                  1                                       
 
 
-class LoraE5{
+class LORAE5{
+
+public:
+   // uint8_t       downlink[50];
+
 private: 
     bool          mode;
     uint8_t       sf;
     bool          adr;
     bool          confirmed;
     uint8_t       port;
+    uint8_t       portDown;
+
     String        devEUI;         
     String        devAddr;        
     String        nwkSKey;        
@@ -36,16 +42,14 @@ private:
     bool          checkResponse(uint32_t timeOut, char *strCheck, bool debug);
     
 public:
-                  LoraE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
+                  LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
     void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t port);
-    void          printInfo(bool sendByPushButton, uint32_t frameDelay, bool lowPower);
+    void          printInfo(bool sendByPushButton, uint32_t frameDelay);
     bool          checkBoard();
 
-    void          setMode(bool mode);
-    void          getMode();
     void          sendMsg();
     void          sendMsg(bool msgType, String payload);
-    //void          sendMsg(bool type, bool confirmed, char* payload);
+    bool          sendData(uint8_t* payload, uint8_t sizeUplink, uint8_t* downlink, uint8_t* sizeDownlink);
     void          setDevEUI(String deveui);
     void          setAppKey(String appkey);
     void          setAppEUI(String appeui);
@@ -53,8 +57,12 @@ public:
     void          setNwkSKey(String nwkskey);
     void          setAppSKey(String appskey);
     bool          join(void);
-    void          setDR(uint8_t sf);
-    void          getDR();
+
+    void          setMode(bool mode);
+    void          getMode();
+    void          setRXDelay();
+    void          setSF(uint8_t sf);
+    void          getSF();
     void          setADR(bool adr);
     void          getADR();
     void          setPort(uint8_t port);
