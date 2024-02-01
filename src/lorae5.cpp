@@ -12,9 +12,10 @@ LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, Stri
 }
 
 void LORAE5::setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confirmed, uint8_t port){
+  unsigned long startTime = millis();
   LoRa_Serial.begin(9600);
   USB_Serial.begin(115200);
-  while (!USB_Serial);
+  while (!USB_Serial && (millis() - startTime < 5000));
   USB_Serial.println("\r\n\n\n\n\n\n\n\n");
   USB_Serial.println("#######################################");
   USB_Serial.println("#### LoRaWAN Training Session #########");
@@ -39,8 +40,6 @@ void LORAE5::setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confi
 }
 
 void LORAE5::setRXDelay(){
-  LoRa_Serial.println("AT+RESET");
-  while (!USB_Serial);
   readResponse(1000,NO_DEBUG);
   LoRa_Serial.println("AT+DELAY=RX1,1000");
   readResponse(400,NO_DEBUG);
