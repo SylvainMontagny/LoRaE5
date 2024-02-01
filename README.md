@@ -8,7 +8,7 @@ Savoie Mont Blanc University provides many educationnal ressources about LoRaWAN
 :bulb: 2 days training sessions available here: [LoRaWAN and IoT Training](https://www.univ-smb.fr/lorawan/avada_portfolio/formation-distanciel/)
 
 # 2. About this Arduino library
-This Arduino Library communicates with the [LoRa-E5 LoRaWAN module](https://wiki.seeedstudio.com/Grove_LoRa_E5_New_Version/). The configuration is made thanks to a unique file called config_application. Here are the possible configuration :
+This Arduino Library communicates with the [Grove Wio E5 LoRa-E5](https://wiki.seeedstudio.com/Grove_LoRa_E5_New_Version/). The configuration is made thanks to a unique file called config_application. Here are the possible configuration :
 
 | #define           	| Possible values      	|  Behavior                                                    	|
 |----------------------	|--------------------	|---------------------------------------------------------------|
