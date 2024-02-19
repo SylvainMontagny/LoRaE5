@@ -28,7 +28,7 @@ private:
     uint8_t       sf;
     bool          adr;
     bool          confirmed;
-    uint8_t       port;
+    uint8_t       portUp;
     uint8_t       portDown;
 
     String        devEUI;         
@@ -43,13 +43,15 @@ private:
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
-    void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t port);
+    void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp);
     void          printInfo(bool sendByPushButton, uint32_t frameDelay);
     bool          checkBoard();
 
     void          sendMsg();
     void          sendMsg(bool msgType, String payload);
-    bool          sendData(uint8_t* payload, uint8_t sizeUplink, uint8_t* downlink, uint8_t* sizeDownlink);
+    void          displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
+    bool          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloadDown, uint8_t* sizeDownlink);
+    void          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp);
     void          setDevEUI(String deveui);
     void          setAppKey(String appkey);
     void          setAppEUI(String appeui);
@@ -62,9 +64,10 @@ public:
     void          getMode();
     void          setRXDelay();
     void          setSF(uint8_t sf);
-    void          getSF();
+    void          getSetSF();
     void          setADR(bool adr);
-    void          getADR();
-    void          setPort(uint8_t port);
-    void          getPort();   
+    uint8_t       getADR();
+    void          setPortUp(uint8_t portUp);
+    uint8_t       getPortUp();
+    void          getPortDown(uint8_t portDown);   
 };
