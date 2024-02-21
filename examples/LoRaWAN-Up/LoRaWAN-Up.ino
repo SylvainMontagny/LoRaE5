@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 #include "lorae5.h"
 #include "config_application.h"
@@ -6,10 +7,14 @@ uint8_t sizePayloadUp = 4;
 
 uint8_t payloadUp[20] = {0x00, 0x01, 0x02, 0x03};
 
-LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey); 
+LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+
+/***********************************************************************/
+/* Please see README page on https://github.com/SylvainMontagny/LoRaE5 */
+/***********************************************************************/
 
 void setup() {
-  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORTUP);
+  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP);
   lorae5.printInfo(SEND_BY_PUSH_BUTTON, FRAME_DELAY);
 
   if(ACTIVATION_MODE == OTAA){
@@ -20,8 +25,6 @@ void setup() {
 }
 
 void loop() {
-  // Send "sizePayloadUp" bytes from "uplink" table
   lorae5.sendData(payloadUp, sizePayloadUp);
-
-  delay(FRAME_DELAY-6000);  // Wait
+  lorae5.awaitNextTransmission(FRAME_DELAY, SEND_BY_PUSH_BUTTON);
 }

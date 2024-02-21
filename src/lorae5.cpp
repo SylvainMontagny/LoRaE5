@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include "lorae5.h"
 
-
 LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey){
   this->devEUI = devEUI;
   this->appEUI = appEUI;
@@ -16,11 +15,9 @@ void LORAE5::setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confi
   LoRa_Serial.begin(9600);
   USB_Serial.begin(115200);
   while (!USB_Serial && (millis() - startTime < 5000));
-  USB_Serial.println("\r\n\n\n\n\n\n\n\n");
-  USB_Serial.println("#######################################");
-  USB_Serial.println("#### LoRaWAN Training Session #########");
-  USB_Serial.println("#### Savoie Mont Blanc University #####\r\n");
-  
+  USB_Serial.println("\r\n\n\n\n");
+  USB_Serial.println("# For more information visit : https://github.com/SylvainMontagny/LoRaE5 ");
+
   while(!checkBoard());
 
   setDevEUI(devEUI);
@@ -96,7 +93,6 @@ void LORAE5::setDevEUI(String deveui){
 }
 
 void LORAE5::setAppEUI(String appeui){
-  this->appEUI = appeui;
   LoRa_Serial.println("AT+ID=APPEUI," + appeui);
   readResponse(400,NO_DEBUG); 
 }
@@ -139,7 +135,6 @@ bool LORAE5::checkBoard(){
   }
   return success;
 }
-
 
 bool LORAE5::join(){
   bool joined = false, failed = false, done = false;
@@ -186,16 +181,6 @@ bool LORAE5::join(){
   return joined;
 }
 
-
-void LORAE5::sendMsg(bool msgType, String payload){
-  USB_Serial.println("");
-  if(msgType == _HEXA)    USB_Serial.println("Send hexadecimal message : " + payload );
-  if(msgType == _STRING) USB_Serial.println("Send string message : \"" + payload + String("\"") );
-
-  LoRa_Serial.println("AT+" + String(this->confirmed? "C":"") + String("MSG") + String((msgType==_HEXA)?"HEX":"") + String("=") + payload);
-  readResponse(10000,DEBUG);
-}
-
 void LORAE5::displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp) {
   USB_Serial.println("");
   USB_Serial.println("Sending " + String(this->confirmed ? "Confirmed " : "Unconfirmed ") + String("Data Up"));
@@ -233,7 +218,6 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
 
   do{
     response = LoRa_Serial.readStringUntil('\n');
-     //USB_Serial.println(response);  // DEBUG
     
     // Analyse End of transmission process
     if ( (index = response.indexOf("Done")) != -1 ){
@@ -244,8 +228,15 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
     else if ( (index = response.indexOf("Start")) != -1 ){
       USB_Serial.println("Transmission Done");
     }
+
+    else if ( (index = response.indexOf("Length error 0")) != -1 ){
+      LoRa_Serial.println("AT+MSG");
+    }
+    
   } while (!done);
-  getSetSF(); 
+  getSetSF();
+  //USB_Serial.println("Condition met to proceed");
+  
 }
 
 bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloadDown, uint8_t* sizePayloadDown){
@@ -260,7 +251,6 @@ bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloa
 
   do{
     response = LoRa_Serial.readStringUntil('\n');
-     //USB_Serial.println(response);  // DEBUG
     
     // Analyse End of transmission process
     if ( (index = response.indexOf("Done")) != -1 ){
@@ -272,6 +262,10 @@ bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloa
       USB_Serial.println("Transmission Done");
     }
 
+    else if ( (index = response.indexOf("Length error 0")) != -1 ){
+      LoRa_Serial.println("AT+MSG");
+    }
+    
     // Analyse Wait ACK
     else if ( (index = response.indexOf("Wait ACK")) != -1 ){
       USB_Serial.println("Wait ACK...");
@@ -322,6 +316,7 @@ bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloa
 
   }  while(!done);
   getSetSF();
+  //USB_Serial.println("Condition met to proceed");
   if( isPayloadDownReceived == true) return true;
   else                            return false;
 }
@@ -371,62 +366,76 @@ bool LORAE5::checkResponse(uint32_t timeOut, char *strCheck, bool debug){
 return success;
 }
 
-
 uint8_t LORAE5::getPortUp(){
   return this->portUp;
 }
 
-
 void LORAE5::getPortDown(uint8_t portDown){
   USB_Serial.println("");
   USB_Serial.println("Downlink Received");
-  USB_Serial.println("- Port          " + String(portDown));
+  USB_Serial.println("- Port " + String(portDown));
   this->portDown = portDown;
 }
-
-
 
 uint8_t LORAE5::getADR(){
   return this->adr;
 }
 
-
 void LORAE5::printInfo(bool sendByPushButton, uint32_t frameDelay){ 
 
-  if(this->mode == OTAA)     {USB_Serial.println("> Activation Mode :       OTAA");}
-  else                       {USB_Serial.println("> Activation Mode :       ABP");}
+  if(this->mode == OTAA)     {USB_Serial.println("> OTAA");}
+  else                       {USB_Serial.println("> ABP");}
 
-  if(sendByPushButton == true)     {USB_Serial.println("> Send frame              On push button event");}
-  else                             {USB_Serial.println("> Send frame every        " + String(frameDelay) +  " ms");}
-
-  USB_Serial.println("> Spreading Factor        " + String(this->sf));
+  USB_Serial.println("> SF " + String(this->sf));
   
-  if(this->adr == true)           {USB_Serial.println("> Adaptive Data Rate      ON");}
-  else                            {USB_Serial.println("> Adaptive Data Rate      OFF");}
+  if(this->adr == true)           {USB_Serial.println("> ADR  ON");}
+  else                            {USB_Serial.println("> ADR  OFF");}
 
-  USB_Serial.println("> Frame type              " + ((this->confirmed == CONF)? String("Confirmed") : String("Unconfirmed")));
-  USB_Serial.println("> App PortUp number         " + String(this->portUp));
+  USB_Serial.println(((this->confirmed == CONF)? String("> Confirmed") : String("> Unconfirmed")));
+  USB_Serial.println("> Port  " + String(this->portUp));
   USB_Serial.println();
-
-  USB_Serial.println(" * Device EUI :      0x " + devEUI);
+  USB_Serial.println(  "* DevEUI   0x " + this->devEUI);
 
   if (this->mode == ABP) {
-    USB_Serial.println(" * Device Address :          0x " + devAddr);
-    USB_Serial.println(" * Network Session Key :     0x " + nwkSKey);
-    USB_Serial.println(" * Application Session Key : 0x " + appSKey);
+    USB_Serial.println("* DevAddr  0x " + this->devAddr);
+    USB_Serial.println("* NwkSKey  0x " + this->nwkSKey);
+    USB_Serial.println("* AppSKey  0x " + this->appSKey);
   }
 
   if (this->mode == OTAA){
-    USB_Serial.println(" * Application key : 0x " + appKey);
-    USB_Serial.println(" * Application EUI : 0x " + appEUI);
- }
+    USB_Serial.println("* AppKey  0x " + this->appKey);
+    USB_Serial.println("* AppEUI-JoinEUI  0x " + this->appEUI);
+  }
 
-  if(sendByPushButton == false){
-    USB_Serial.println("\r\n> Message will be sent every " + String(frameDelay) + String(" ms"));
-  }
-  else {
-    USB_Serial.println(" Send letter 'p' on your keyboard to send a message");
-  }
     USB_Serial.println();
   
+}
+
+void LORAE5::awaitNextTransmission(uint32_t delay, bool pushButton){
+  uint32_t startTime = millis();
+  bool upRequest = false;
+
+  if ( pushButton == false ){
+    USB_Serial.println("\r\n> Press 't' or wait " + String(delay) + String(" ms."));
+    while ( ((millis() - startTime) < delay) && (upRequest != true)) {
+      while (Serial.available() > 0) {
+        char userInput = Serial.read(); 
+        if ( userInput == 't' || userInput == 'T' ){
+          //USB_Serial.println("\n-----\nTransmission requested\n-----");
+          upRequest =  true;
+        }
+      }
+    }
+  } else {
+    USB_Serial.println("\r\n> Press 't' to send a message.");
+    while (upRequest != true) {
+      while (Serial.available() > 0) {
+        char userInput = Serial.read(); 
+        if ( userInput == 't' || userInput == 'T' ){
+          //USB_Serial.println("\n-----\nTransmission requested\n-----");
+          upRequest =  true;
+        }
+      }
+    }
+  }
 }

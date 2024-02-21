@@ -1,13 +1,16 @@
+/***********************************************************************/
+/* Please see README page on https://github.com/SylvainMontagny/LoRaE5 */
+/***********************************************************************/
 
 #define ACTIVATION_MODE     		ABP
 #define CLASS						        CLASS_A
 #define SPREADING_FACTOR    		7
 #define ADAPTIVE_DR         		false
 #define CONFIRMED           		false
-#define PORT                		15
+#define PORT_UP                	15
 
 #define SEND_BY_PUSH_BUTTON 		false
-#define FRAME_DELAY         		12000
+#define FRAME_DELAY         		10000
 
 String devEUI = "0000000000000000";
 

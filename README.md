@@ -12,7 +12,7 @@ This Arduino Library communicates with the [Grove Wio E5 LoRa-E5](https://wiki.s
 
 | #define           	| Possible values      	|  Behavior                                                    	|
 |----------------------	|--------------------	|---------------------------------------------------------------|
-| ACTIVATION_MODE      	| ABP or OTAA        	|  Activation Method                              	            |
+| ACTIVATION_MODE      	| ABP or OTAA        	|  Activation Method                              	        |
 | CLASS                	| CLASS_A or CLASS_C 	|  Class                                             	        |
 | SPREADING_FACTOR     	| Number [7;12]      	|  7 = SF7, 8 = SF8, ..., 12 = SF12                             |
 | ADAPTIVE_DR          	| true or false      	|  Enable Adaptive Data Rate (if true)                         	|
@@ -27,9 +27,10 @@ This library has only been tested with an **Aduino Leonardo board**.
 
 ## 2.1. Arduino IDE Installation
 - Install Arduino IDE from the [Arduino Website](https://www.arduino.cc/)
-- Download the code of this library as a Zip file: [Link here](https://github.com/SylvainMontagny/LoRaE5/archive/refs/heads/main.zip) 
-- In Arduino IDE, go to **sketch > include library > Add ZIP library**. Select the downloaded Zip file.
-- Open the example project: **File > Example > LoRa-E5 Library > LoRaWAN**
+- In Arduino IDE, go to **tools > Manage Librairies...** or **Ctrl + Shift + I**
+- Write in the section **Filter your search...** : "lora e5".
+- Choose your desired version and then click on **Install**.
+
 
 ## 2.2. Arduino Hardware
 This library works with any Arduino boards with two serial ports (or one USB + one Serial). It has been tested on a Leonardo board with: 

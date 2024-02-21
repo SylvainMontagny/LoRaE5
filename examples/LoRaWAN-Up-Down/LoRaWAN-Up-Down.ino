@@ -6,12 +6,16 @@ uint8_t sizePayloadUp = 4;
 uint8_t sizePayloadDown = 0;
 
 uint8_t payloadUp[20] = {0x00, 0x01, 0x02, 0x03};
-uint8_t payloadDown[50]  ={0};
+uint8_t payloadDown[20]  ={0};
 
-LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey); 
+LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+
+/***********************************************************************/
+/* Please see README page on https://github.com/SylvainMontagny/LoRaE5 */
+/***********************************************************************/
 
 void setup() {
-  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORTUP);
+  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP);
   lorae5.printInfo(SEND_BY_PUSH_BUTTON, FRAME_DELAY);
 
   if(ACTIVATION_MODE == OTAA){
@@ -22,9 +26,9 @@ void setup() {
 }
 
 void loop() {
-  // Send "sizeUplink" bytes from "uplink" table
+  // Send "sizePayloadUp" bytes from "payloadUp" table
   if( lorae5.sendData(payloadUp, sizePayloadUp, payloadDown, &sizePayloadDown) == true){
-    // You have received "sizeDownlink" bytes stored in "downlink" table
+    // You have received "sizePayloadDown" bytes stored in "payloadDown" table
   } 
-  delay(FRAME_DELAY-6000);  // Wait
+  lorae5.awaitNextTransmission(FRAME_DELAY, SEND_BY_PUSH_BUTTON);
 }

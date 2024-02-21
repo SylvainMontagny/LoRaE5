@@ -14,8 +14,8 @@
 #define CONF                    true
 #define UNCONF                  false
 
-#define _HEXA                     0
-#define _STRING                  1                                       
+#define _HEXA                   0
+#define _STRING                 1                                       
 
 
 class LORAE5{
@@ -36,22 +36,23 @@ private:
     String        nwkSKey;        
     String        appSKey;       
     String        appKey;         
-    String        appEUI;         
+    String        appEUI;
+
+    bool          SEND_BY_PUSH_BUTTON;      
          
     void          readResponse(uint32_t timeOut, bool debug);
     bool          checkResponse(uint32_t timeOut, char *strCheck, bool debug);
+    void          displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
     void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp);
     void          printInfo(bool sendByPushButton, uint32_t frameDelay);
-    bool          checkBoard();
+    bool          checkBoard(void);
 
-    void          sendMsg();
-    void          sendMsg(bool msgType, String payload);
-    void          displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
     bool          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloadDown, uint8_t* sizeDownlink);
     void          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp);
+    void          awaitNextTransmission(uint32_t delay, bool pushButton);
     void          setDevEUI(String deveui);
     void          setAppKey(String appkey);
     void          setAppEUI(String appeui);
@@ -61,13 +62,13 @@ public:
     bool          join(void);
 
     void          setMode(bool mode);
-    void          getMode();
+    void          getMode(void);
     void          setRXDelay();
     void          setSF(uint8_t sf);
-    void          getSetSF();
+    void          getSetSF(void);
     void          setADR(bool adr);
-    uint8_t       getADR();
+    uint8_t       getADR(void);
     void          setPortUp(uint8_t portUp);
-    uint8_t       getPortUp();
+    uint8_t       getPortUp(void);
     void          getPortDown(uint8_t portDown);   
 };
