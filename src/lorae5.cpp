@@ -186,31 +186,28 @@ void LORAE5::displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp) {
   USB_Serial.println("Sending " + String(this->confirmed ? "Confirmed " : "Unconfirmed ") + String("Data Up"));
   USB_Serial.print("- Payload UP   ");
 
+  String stringPayloadUp = "";
   for (uint8_t i = 0; i < sizePayloadUp; i++) {
     USB_Serial.print(" 0x");
     if (payloadUp[i] < 0x10) {
       USB_Serial.print('0');
+      stringPayloadUp += 0;
     }
     USB_Serial.print(payloadUp[i], HEX);
     USB_Serial.print(" ");
+    stringPayloadUp += String(payloadUp[i], HEX);
   }
 
   USB_Serial.println("");
   USB_Serial.println("- PortUp\t" + String(this->portUp));
   USB_Serial.println("- SF\t\t" + String(this->sf));
 
-  String stringPayloadUp = "";
-  for (uint8_t i = 0; i < sizePayloadUp; i++) {
-    stringPayloadUp += String(payloadUp[i], HEX);
-  }
-
   LoRa_Serial.println("AT+" + String(this->confirmed ? "C" : "") + String("MSGHEX") + String("=") + stringPayloadUp);
 }
 
 void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
 
-  bool done = false;  
-  String stringPayloadUp = "";
+  bool done = false;
   String response;
   uint32_t index;
 
@@ -235,15 +232,12 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
     
   } while (!done);
   getSetSF();
-  //USB_Serial.println("Condition met to proceed");
-  
 }
 
 bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloadDown, uint8_t* sizePayloadDown){
 
   bool done = false; 
   bool isPayloadDownReceived = false; 
-  String stringPayloadUp = "";
   String response;
   uint32_t index;
 
@@ -316,7 +310,6 @@ bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloa
 
   }  while(!done);
   getSetSF();
-  //USB_Serial.println("Condition met to proceed");
   if( isPayloadDownReceived == true) return true;
   else                            return false;
 }
