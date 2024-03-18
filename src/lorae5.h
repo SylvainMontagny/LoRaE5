@@ -25,6 +25,7 @@ public:
 
 private: 
     bool          mode;
+    uint8_t       devClass;
     uint8_t       sf;
     bool          adr;
     bool          confirmed;
@@ -63,6 +64,8 @@ public:
 
     void          setMode(bool mode);
     void          getMode(void);
+    void          setClass(uint8_t devClass);
+    uint8_t       getClass(void);
     void          setRXDelay();
     void          setSF(uint8_t sf);
     void          getSetSF(void);
