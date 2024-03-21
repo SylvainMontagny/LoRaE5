@@ -1,3 +1,4 @@
+#include <stdint.h>
 #define USB_Serial    Serial
 #define LoRa_Serial   Serial1
 
@@ -11,12 +12,21 @@
 #define DEBUG                   true
 #define NO_DEBUG                false
 
+#define DEBUG_LEVEL             0
+/* list for DEBUG_LEVEL:
+- join : 1;
+- getSetSF : 2;
+- sendData : 3;
+- awaitForDownlink : 4;
+*/
+
 #define CONF                    true
 #define UNCONF                  false
 
 #define _HEXA                   0
 #define _STRING                 1                                       
 
+enum RETURN { RET_DOWNLINK, RET_NO_DOWNLINK, RET_NO_ACK, RET_T, RET_TIMEOUT };
 
 class LORAE5{
 
@@ -40,38 +50,46 @@ private:
     String        appEUI;
 
     bool          SEND_BY_PUSH_BUTTON;      
+    uint32_t      FRAME_DELAY;
          
     void          readResponse(uint32_t timeOut, bool debug);
     bool          checkResponse(uint32_t timeOut, char *strCheck, bool debug);
-    void          displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
-    
-public:
-                  LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
-    void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp);
-    void          printInfo(bool sendByPushButton, uint32_t frameDelay);
     bool          checkBoard(void);
 
-    bool          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloadDown, uint8_t* sizeDownlink);
-    void          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp);
-    void          awaitNextTransmission(uint32_t delay, bool pushButton);
     void          setDevEUI(String deveui);
     void          setAppKey(String appkey);
     void          setAppEUI(String appeui);
     void          setDevAddr(String devaddr);
     void          setNwkSKey(String nwkskey);
     void          setAppSKey(String appskey);
-    bool          join(void);
-
     void          setMode(bool mode);
-    void          getMode(void);
     void          setClass(uint8_t devClass);
-    uint8_t       getClass(void);
     void          setRXDelay();
     void          setSF(uint8_t sf);
-    void          getSetSF(void);
     void          setADR(bool adr);
-    uint8_t       getADR(void);
     void          setPortUp(uint8_t portUp);
+
+    void          getMode(void);
+    void          getSetSF(void);
+    void          getPortDown(String response);
+    void          getPayloadDown(uint8_t* payloadDown, uint8_t* sizePayloadDown, String response);
+    void          getChannelDown(String response);
+    uint8_t       getADR(void);
     uint8_t       getPortUp(void);
-    void          getPortDown(uint8_t portDown);   
+    uint8_t       getClass(void);
+
+    void          sendPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
+    
+public:
+                  LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
+    void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
+    void          printInfo();
+
+    bool          join(void);
+
+    void          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp);
+    uint8_t       awaitForDownlinkClass_A(uint8_t* payloadDown, uint8_t* sizePayloadDown);
+    uint8_t       awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePayloadDown);
+    uint8_t       await();
+
 };
