@@ -9,12 +9,32 @@
 - "LoRaWAN modem is busy" message may occurs for Class C/ABP.
 
 
-## Version: V1.X.X | 2024-03-XX
+## Version: V2.0.0 | 2024-04-09
 
 ### Added
-- Implement CLASS_C mode.
-- Implement "setClass" method.
-- Implement "getClass" method.
+- Implement a awaitForDownlinkClass_A() & awaitForDownlinkClass_C() method.
+- Implement a getPortDown() method.
+- Implement a getPayloadDown() method.
+- Implement a getClassDownlink() method.
+- Implement an await() method.
+- "LoRaWAN_Class_A.ino", "LoRaWAN_Class_C" & "LoRaWAN_State-Machine.ino".
+
+### Modified
+- Rename "displayPayloadUp()" by "sendPayloadUp()".
+- In sendData() functions with 2 parameters, rename "done = 1" by "done = true".
+- Move "Send_By_Push_Button" variable from each function parameters to setup() function.
+- Arrange functions in header (private or public).
+
+### Removed
+- SendData() function with 4 parameters.
+
+
+## Version: V1.2.0 | 2024-03-22
+
+### Added
+- Implement a CLASS_C mode.
+- Implement a "setClass" method.
+- Implement a "getClass" method.
 - Display the downlink C frame to the user.
 
 ### Modified
@@ -24,7 +44,7 @@
 ## Version: V1.1.1 | 2024-03-08
 
 ### Added
-- Implemention of a method keyboard Input "t" for Uplink Initiation.
+- Implement a method keyboard Input "t" for Uplink Initiation.
 - Improved program stability by fixing "Length error 0" error.
 
 ### Modified

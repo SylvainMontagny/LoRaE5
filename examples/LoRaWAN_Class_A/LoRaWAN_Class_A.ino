@@ -15,8 +15,8 @@ LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
 /***********************************************************************/
 
 void setup() {
-  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP);
-  lorae5.printInfo(SEND_BY_PUSH_BUTTON, FRAME_DELAY);
+  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
+  lorae5.printInfo();
 
   if(ACTIVATION_MODE == OTAA){
     USB_Serial.println("Join Procedure in progress...");
@@ -26,9 +26,11 @@ void setup() {
 }
 
 void loop() {
-  // Send "sizePayloadUp" bytes from "payloadUp" table
-  if( lorae5.sendData(payloadUp, sizePayloadUp, payloadDown, &sizePayloadDown) == true){
-    // You have received "sizePayloadDown" bytes stored in "payloadDown" table
-  } 
-  lorae5.awaitNextTransmission(FRAME_DELAY, SEND_BY_PUSH_BUTTON);
+  lorae5.sendData(payloadUp, sizePayloadUp);
+  lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown);
+  lorae5.await();
+}
+
+void processDownlink(uint8_t* payloadDown, uint8_t sizePayloadDown) {
+  //user-requested actions
 }
