@@ -43,7 +43,7 @@ private:
          
     void          readResponse(uint32_t timeOut, bool debug);
     bool          checkResponse(uint32_t timeOut, char *strCheck, bool debug);
-    void          displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
+    void          sendPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp);
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);

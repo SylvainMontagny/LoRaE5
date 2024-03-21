@@ -189,7 +189,7 @@ bool LORAE5::join(){
   return joined;
 }
 
-void LORAE5::displayPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp) {
+void LORAE5::sendPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp) {
   USB_Serial.println("");
   USB_Serial.println("Sending " + String(this->confirmed ? "Confirmed " : "Unconfirmed ") + String("Data Up"));
   USB_Serial.print("- Payload UP   ");
@@ -219,7 +219,7 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
   String response;
   uint32_t index;
 
-  displayPayloadUp(payloadUp, sizePayloadUp);
+  sendPayloadUp(payloadUp, sizePayloadUp);
 
   do{
     response = LoRa_Serial.readStringUntil('\n');
@@ -227,7 +227,7 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
     
     // Analyse End of transmission process
     if ( (index = response.indexOf("Done")) != -1 ){
-      done = 1;
+      done = true;
     }
 
     // Analyse Start transmission
@@ -250,15 +250,15 @@ bool LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp, uint8_t* payloa
   String response;
   uint32_t index;
 
-  displayPayloadUp(payloadUp, sizePayloadUp);
+  sendPayloadUp(payloadUp, sizePayloadUp);
 
   do{
     response = LoRa_Serial.readStringUntil('\n');
     //USB_Serial.println(response);  // DEBUG
 
-    // Analyse End of transmission process
+    // Analyse End of transmission process +downlink
     if ( (index = response.indexOf("Done")) != -1 ){
-      done = 1;
+      done = true;
     }
 
     // Analyse Start transmission
