@@ -15,7 +15,7 @@ LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
 /***********************************************************************/
 
 void setup() {
-  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
+  lorae5.setup(REGION, ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
   lorae5.printInfo();
 
   if(ACTIVATION_MODE == OTAA){
@@ -26,11 +26,18 @@ void setup() {
 }
 
 void loop() {
+  // Send data
   lorae5.sendData(payloadUp, sizePayloadUp);
-  lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown);
-  lorae5.awaitForDownlinkClass_C(payloadDown, &sizePayloadDown);
+  // Await for Downlink Class_A
+  if (lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
+    processDownlink();
+  };
+  // Await for Downlink Class_C
+  if (lorae5.awaitForDownlinkClass_C(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
+    processDownlink();
+  };
 }
 
-void processDownlink(uint8_t* payloadDown, uint8_t sizePayloadDown) {
-  //user-requested actions
+void processDownlink() {
+  // You have received "sizePayloadDown" bytes stored in the table "payloadDown"
 }

@@ -12,7 +12,7 @@ uint8_t payloadDown[20]  ={0};
 
 LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
 
-enum class State { SEND_DATA, AWAIT_FOR_DOWNLINK_CLASS_A, AWAIT_FOR_DOWNLINK_CLASS_C, AWAIT, PROCESS_DOWNLINK};
+enum class State { SEND_DATA, AWAIT_FOR_DOWNLINK_CLASS_A, AWAIT_FOR_DOWNLINK_CLASS_C, SLEEP, PROCESS_DOWNLINK};
 
 State currentState = State::SEND_DATA;
 
@@ -21,7 +21,7 @@ State currentState = State::SEND_DATA;
 /***********************************************************************/
 
 void setup() {
-  lorae5.setup(ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
+  lorae5.setup(REGION, ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
   lorae5.printInfo();
 
   if(ACTIVATION_MODE == OTAA){
@@ -48,7 +48,7 @@ void loop() {
             break;
           
           case RET_NO_DOWNLINK:
-            currentState = State::AWAIT;
+            currentState = State::PROCESS_DOWNLINK;
             break;
 
           case RET_NO_ACK:
@@ -79,18 +79,18 @@ void loop() {
     }
 
     case State::PROCESS_DOWNLINK:
-        processDownlink(payloadDown, sizePayloadDown);
-        currentState = State::AWAIT;
+        processDownlink();
+        currentState = State::SLEEP;
         break;
 
-    case State::AWAIT:
-        lorae5.await();
+    case State::SLEEP:
+        lorae5.sleep();
         currentState = State::SEND_DATA;
         break;
 
   }
 }
 
-void processDownlink(uint8_t* payloadDown, uint8_t sizePayloadDown) {
+void processDownlink() {
   //user-requested actions
 }

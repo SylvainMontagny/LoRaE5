@@ -2,6 +2,9 @@
 #define USB_Serial    Serial
 #define LoRa_Serial   Serial1
 
+#define EU868                   0
+#define US915                   1
+
 #define ABP                     0 
 #define OTAA     		            1
 
@@ -18,6 +21,7 @@
 - getSetSF : 2;
 - sendData : 3;
 - awaitForDownlink : 4;
+- setFrequencyBand : 5;
 */
 
 #define CONF                    true
@@ -34,6 +38,7 @@ public:
    // uint8_t       downlink[50];
 
 private: 
+    uint8_t       region;
     bool          mode;
     uint8_t       devClass;
     uint8_t       sf;
@@ -68,6 +73,7 @@ private:
     void          setSF(uint8_t sf);
     void          setADR(bool adr);
     void          setPortUp(uint8_t portUp);
+    void          setFrequencyBand(void);
 
     void          getMode(void);
     void          getSetSF(void);
@@ -82,7 +88,7 @@ private:
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
-    void          setup(bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
+    void          setup(uint8_t band, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
     void          printInfo();
 
     bool          join(void);
@@ -90,6 +96,6 @@ public:
     void          sendData(uint8_t* payloadUp, uint8_t sizePayloadUp);
     uint8_t       awaitForDownlinkClass_A(uint8_t* payloadDown, uint8_t* sizePayloadDown);
     uint8_t       awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePayloadDown);
-    uint8_t       await();
-
+    uint8_t       sleep(void);
+    
 };

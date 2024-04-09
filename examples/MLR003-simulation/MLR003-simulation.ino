@@ -2,13 +2,16 @@
 #include "lorae5.h"
 #include "config_application.h"
 
-uint8_t sizePayloadUp = 4;
+uint8_t sizePayloadUp = 2;
 uint8_t sizePayloadDown = 0;
 
-uint8_t payloadUp[20] = {0x00, 0x01, 0x02, 0x03};
-uint8_t payloadDown[20]  ={0};
+// payloadUp[0] = setpoint
+// payloadUp[1] = temperature
+uint8_t payloadUp[2] = {20, 20};
+uint8_t payloadDown[50]  ={0};
+bool up = true;
 
-LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey);
+LORAE5 lorae5(devEUI, appEUI, appKey, devAddr, nwkSKey, appSKey); 
 
 /***********************************************************************/
 /* Please see README page on https://github.com/SylvainMontagny/LoRaE5 */
@@ -25,14 +28,18 @@ void setup() {
    }
 }
 
-void loop() {
+void loop(){
   // Send data
   lorae5.sendData(payloadUp, sizePayloadUp);
 
-  // Check downlink and call processDownlink() 
-  if (lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
+  // Check downlink and call processDownlink()
+  if ( lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown) == RET_DOWNLINK ){
+    payloadUp[0]=payloadDown[0];
     processDownlink();
-  };
+  }
+
+  (up==true)? payloadUp[1]+=1 : payloadUp[1]-=1;
+  if ((payloadUp[1] == 15) or (payloadUp[1] == 25)) up = !up;
 
   // Wait for the next transmission
   lorae5.sleep();

@@ -2,6 +2,7 @@
 /* Please see README page on https://github.com/SylvainMontagny/LoRaE5 */
 /***********************************************************************/
 
+#define REGION				          EU868
 #define ACTIVATION_MODE     		ABP
 #define CLASS						        CLASS_A
 #define SPREADING_FACTOR    		7
@@ -10,7 +11,7 @@
 #define PORT_UP                	15
 
 #define SEND_BY_PUSH_BUTTON 		false
-#define FRAME_DELAY         		10000
+#define FRAME_DELAY         		20000
 
 String devEUI = "0000000000000000";
 
