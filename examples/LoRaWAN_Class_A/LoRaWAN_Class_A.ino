@@ -29,12 +29,12 @@ void loop() {
   // Send data
   lorae5.sendData(payloadUp, sizePayloadUp);
 
-  // Check downlink and call processDownlink() 
+  // Check downlink on RX1-RX2 and call processDownlink() 
   if (lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
     processDownlink();
   };
 
-  // Wait for the next transmission
+  // Wait in Low Power mode
   lorae5.sleep();
 }
 

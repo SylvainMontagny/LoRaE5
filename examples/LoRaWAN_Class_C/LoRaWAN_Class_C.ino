@@ -28,11 +28,13 @@ void setup() {
 void loop() {
   // Send data
   lorae5.sendData(payloadUp, sizePayloadUp);
-  // Await for Downlink Class_A
+  
+  // Check downlink on RX1-RX2 and call processDownlink() 
   if (lorae5.awaitForDownlinkClass_A(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
     processDownlink();
   };
-  // Await for Downlink Class_C
+  
+  // Check downlink on RXC and call processDownlink() 
   if (lorae5.awaitForDownlinkClass_C(payloadDown, &sizePayloadDown) == RET_DOWNLINK){
     processDownlink();
   };

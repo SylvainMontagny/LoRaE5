@@ -92,5 +92,5 @@ void loop() {
 }
 
 void processDownlink() {
-  //user-requested actions
+  // You have received "sizePayloadDown" bytes stored in the table "payloadDown"
 }
