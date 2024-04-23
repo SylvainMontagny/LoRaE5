@@ -4,9 +4,23 @@
 
 
 ## Knows limitation
-- Tested on "EU868" & "US915".
-- Tested compatibility only with "Leonardo" and "Zero" Arduino boards.
-- "LoRaWAN modem is busy" message may occurs for Class C/ABP.
+* Tested on "EU868" & "US915".
+* Tested compatibility only with: 
+1. "Leonardo", "Zero" and "Due" Arduino boards,
+2. "ESP32_DevKitc_V4" Espressif board,
+3. "F446RE" and "L073RZ" Nucleo boards,
+4. "Wio Terminal" Seeed board,
+* "LoRaWAN modem is busy" message may occurs for Class C/ABP.
+
+## Version: V3.0.0 | 2024-05-14
+
+### Added
+- A “config_board.h” header to manage several defined boards and allow you to choose the serial configuration for the others.
+- Implement a setup_hardware() method.
+
+### Modified
+- "USB_Serial" has been replaced by "Debug_Serial".
+- Renamed setup() method to setup_lorawan().
 
 
 ## Version: V2.0.0 | 2024-04-22

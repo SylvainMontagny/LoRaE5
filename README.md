@@ -42,16 +42,22 @@ This library has only been tested with an **Arduino Leonardo** and an **Arduino 
 
 ## 2.2. Arduino Hardware
 
-This library works with any Arduino boards with two serial ports (or one USB + one Serial). It has been tested on an Arduino **Leonardo & Zero** boards with: 
-- USB_Serial: Connection to computer: 115200 baud. 
+This library works with any Arduino boards with two serial ports (or one USB + one Serial). It has been tested on an Arduino **Leonardo, Zero & Due** boards with: 
+- Debug_Serial: Connection to computer: 115200 baud. 
 - LoRa_Serial: Serial link for the communication between the Arduino MCU and the LoRa-E5 LoRaWAN module. 
 
 Your LoRa-E5 module need to be connected to the RX-TX arduino header pin.
 
+It also works with :
+- Espressif "ESP32_DevKitc_V4" board,
+- Nucleo "F446RE" and "L073RZ" boards,
+- Seeed "Wio Terminal" board,
+
 
 ## 2.3. How to use this library
 
-- Set up the parameters in **config_application.h** file. If you use ABP, you need to configure devAdddr, nwkSKey and appSKey. If you use OTAA you need to configure devEUI, appEUI and appKey.
+- Set up the LoRaWAN parameters in **config_application.h** file. If you use ABP, you need to configure devAdddr, nwkSKey and appSKey. If you use OTAA you need to configure devEUI, appEUI and appKey.
+- Set up the hardware parameters in **config_board.h** file. Choose the right setting for your board (Serial or Pins).
 - Set up your Gateway or use a public coverage.
 - Register your Device on a Network Server (TTN, Actility, LORIOT, ...)
 - Open the Serial Monitor in the arduino IDE to see the logs. :warning: 115200 baud.
@@ -65,4 +71,3 @@ Your LoRa-E5 module need to be connected to the RX-TX arduino header pin.
 ## 2.5. Best practices
 
 - It is recommended to opt for OTAA over ABP for the Activation Mode.
- 

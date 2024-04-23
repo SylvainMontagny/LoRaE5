@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <HardwareSerial.h>
 #include "lorae5.h"
 
 LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey){
@@ -10,7 +11,54 @@ LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, Stri
   this->appSKey = appSKey;
 }
 
-/// @brief Allow to set all the setup for our transmission
+#if defined(ARDUINO_AVR_LEONARDO)
+/// @brief Allow to set the hardware setup for our transmission
+/// @param myDebugSerial is the debug serial link
+/// @param myLoRaSerial is the LoRaE5 serial link
+void LORAE5::setup_hardware(Serial_* myDebugSerial, HardwareSerial* myLoRaSerial){ 
+  unsigned long startTime = millis();
+  
+  this->serialD = myDebugSerial;
+  this->serialL = myLoRaSerial;
+
+  (this->serialD)->begin(115200);
+  (this->serialL)->begin(9600);
+
+  while (millis() - startTime < 2000);
+}
+#elif defined(ARDUINO_WIO_TERMINAL)
+/// @brief Allow to set the hardware setup for our transmission
+/// @param myDebugSerial is the debug serial link
+/// @param myLoRaSerial is the LoRaE5 serial link
+void LORAE5::setup_hardware(Serial_* myDebugSerial, Uart* myLoRaSerial){ 
+  unsigned long startTime = millis();
+  
+  this->serialD = myDebugSerial;
+  this->serialL = myLoRaSerial;
+
+  (this->serialD)->begin(115200);
+  (this->serialL)->begin(9600);
+
+  while (millis() - startTime < 2000);
+}
+#else
+/// @brief Allow to set the hardware setup for our transmission
+/// @param myDebugSerial is the debug serial link
+/// @param myLoRaSerial is the LoRaE5 serial link
+void LORAE5::setup_hardware(HardwareSerial* myDebugSerial, HardwareSerial* myLoRaSerial){ 
+  unsigned long startTime = millis();
+
+  this->serialD = myDebugSerial;
+  this->serialL = myLoRaSerial;
+
+  (this->serialD)->begin(115200);
+  (this->serialL)->begin(9600);
+
+  while (millis() - startTime < 2000);
+}
+#endif
+
+/// @brief Allow to set the LoRaWAN setup for our transmission
 /// @param region is the region selected by the user
 /// @param mode is the mode selected by the user
 /// @param devClass is the class of the device selected by the user
@@ -20,11 +68,7 @@ LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, Stri
 /// @param portUp is the uplink port selected by the user
 /// @param SEND_BY_PUSH_BUTTON is the push button condition selected by the user
 /// @param FRAME_DELAY is the frame delay selected by the user
-void LORAE5::setup(uint8_t region, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confirmed, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY){
-  unsigned long startTime = millis();
-  LoRa_Serial.begin(9600);
-  USB_Serial.begin(115200);
-  while (!USB_Serial && (millis() - startTime < 5000));
+void LORAE5::setup_lorawan(uint8_t region, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confirmed, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY){
 
   while(!checkBoard());
 
@@ -54,9 +98,9 @@ void LORAE5::setup(uint8_t region, bool mode, uint8_t devClass, uint8_t sf, bool
 /// @brief Allow to set the RX delay
 void LORAE5::setRXDelay(){
   readResponse(1000,NO_DEBUG);
-  LoRa_Serial.println("AT+DELAY=RX1,1000");
+  SERIAL_L("AT+DELAY=RX1,1000");
   readResponse(400,NO_DEBUG);
-  LoRa_Serial.println("AT+DELAY=RX2,2000");
+  SERIAL_L("AT+DELAY=RX2,2000");
   readResponse(400,NO_DEBUG);
 }
 
@@ -69,7 +113,7 @@ void LORAE5::setMode(bool mode){
   if (mode == OTAA)   strMode = "LWOTAA";
   if (mode == ABP)    strMode = "LWABP";
 
-  LoRa_Serial.println("AT+MODE=" + strMode);
+  SERIAL_L("AT+MODE=" + strMode);
   readResponse(400,NO_DEBUG);
 }
 
@@ -81,7 +125,7 @@ void LORAE5::setClass(uint8_t devClass){
   this->devClass = devClass;
   if (devClass == CLASS_A)    strClass = "A";
   if (devClass == CLASS_C)    strClass = "C";
-  LoRa_Serial.println("AT+CLASS=" + strClass);
+  SERIAL_L("AT+CLASS=" + strClass);
   readResponse(400,NO_DEBUG);
 }
 
@@ -90,29 +134,29 @@ void LORAE5::setClass(uint8_t devClass){
 void LORAE5::setSF(uint8_t sf){
   this->sf = sf;
   if ((this->region) == EU868){
-  LoRa_Serial.println("AT+DR=DR" + String(-sf+12));
+  SERIAL_L("AT+DR=DR" + String(-sf+12));
   }
   if ((this->region) == US915){
-  LoRa_Serial.println("AT+DR=DR" + String(-sf+10));
+  SERIAL_L("AT+DR=DR" + String(-sf+10));
   }
   
-  String response = LoRa_Serial.readStringUntil('\n');
+  String response = (this->serialL)->readStringUntil('\n');
   readResponse(400,NO_DEBUG);   
 }
 
 /// @brief Allow to process and set the Spreading Factor (SF) received from the downlink
 void LORAE5::getSetSF(){
   String response;
-  LoRa_Serial.setTimeout(500);
-  LoRa_Serial.println("AT+DR");
-  response = LoRa_Serial.readStringUntil('\n');
+  (this->serialL)->setTimeout(500);
+  SERIAL_L("AT+DR");
+  response = (this->serialL)->readStringUntil('\n');
   #if DEBUG_LEVEL == 2
-  USB_Serial.println(response);  // DEBUG
+  SERIAL_D(response);  // DEBUG
   #endif
   if (this->adr == true){
-    response = LoRa_Serial.readStringUntil('\n');
+    response = (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 2 
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
   }
 
@@ -139,49 +183,49 @@ void LORAE5::getSetSF(){
 /// @param adr is to enable or disable the Adaptive Data Rate
 void LORAE5::setADR(bool adr){
   this->adr = adr;
-  LoRa_Serial.println("AT+ADR=" + ((adr == true)? String("ON") : String("OFF")));
+  SERIAL_L("AT+ADR=" + ((adr == true)? String("ON") : String("OFF")));
   readResponse(400,NO_DEBUG);
 }
 
 /// @brief Allow to set Device EUI
 /// @param deveui is the Device EUI
 void LORAE5::setDevEUI(String deveui){
-  LoRa_Serial.println("AT+ID=DEVEUI," + devEUI);
+  SERIAL_L("AT+ID=DEVEUI," + devEUI);
   readResponse(400,NO_DEBUG); 
 }
 
 /// @brief Allow to set Application EUI
 /// @param appeui is the Application EUI
 void LORAE5::setAppEUI(String appeui){
-  LoRa_Serial.println("AT+ID=APPEUI," + appeui);
+  SERIAL_L("AT+ID=APPEUI," + appeui);
   readResponse(400,NO_DEBUG); 
 }
 
 /// @brief Allow to set Application Key
 /// @param appkey is the Application Key
 void LORAE5::setAppKey(String appkey){
-  LoRa_Serial.println("AT+KEY=APPKEY," + appkey);
+  SERIAL_L("AT+KEY=APPKEY," + appkey);
   readResponse(400,NO_DEBUG); 
 }
 
 /// @brief Allow to set Device Address
 /// @param devaddr is the Device Address
 void LORAE5::setDevAddr(String devaddr){
-  LoRa_Serial.println("AT+ID=DEVADDR," + devaddr);
+  SERIAL_L("AT+ID=DEVADDR," + devaddr);
   readResponse(400,NO_DEBUG); 
 }
 
 /// @brief Allow to set Network Session Key
 /// @param nwkskey is the Network Session Key
 void LORAE5::setNwkSKey(String nwkskey){
-  LoRa_Serial.println("AT+KEY=NWKSKEY," + nwkskey);
+  SERIAL_L("AT+KEY=NWKSKEY," + nwkskey);
   readResponse(400,NO_DEBUG);   
 }
 
 /// @brief Allow to set Application Session Key
 /// @param appskey is the Application Session Key
 void LORAE5::setAppSKey(String appskey){
-  LoRa_Serial.println("AT+KEY=APPSKEY," + appskey);
+  SERIAL_L("AT+KEY=APPSKEY," + appskey);
   readResponse(400,NO_DEBUG);   
 }
 
@@ -189,7 +233,7 @@ void LORAE5::setAppSKey(String appskey){
 /// @param portUp is the uplink port selected by the user
 void LORAE5::setPortUp(uint8_t portUp){
   this->portUp = portUp;
-  LoRa_Serial.println("AT+PORT=" + String(portUp));
+  SERIAL_L("AT+PORT=" + String(portUp));
   readResponse(400,NO_DEBUG); 
 }
 
@@ -198,13 +242,13 @@ void LORAE5::setPortUp(uint8_t portUp){
 bool LORAE5::checkBoard(){
   bool success;
   delay(500);
-  LoRa_Serial.println("AT");
-  USB_Serial.println("\n\n\n\n");
+  SERIAL_L("AT");
+  SERIAL_D("\n\n\n\n");
   if ( (success =  checkResponse(400,"+AT: OK\r\n",NO_DEBUG)) == false){
-    USB_Serial.println("> LoRa-E5 board not detected ...");
+    SERIAL_D("> LoRa-E5 board not detected ...");
   }
   else{
-    USB_Serial.println("> LoRa-E5 board detected ...\n");
+    SERIAL_D("> LoRa-E5 board detected ...\n");
   }
   return success;
 }
@@ -217,13 +261,13 @@ bool LORAE5::join(){
   uint32_t index;
 
   delay(2000);
-  LoRa_Serial.setTimeout(10000);
-  LoRa_Serial.println("AT+JOIN");
+  (this->serialL)->setTimeout(10000);
+  SERIAL_L("AT+JOIN");
 
   do{
-    response = LoRa_Serial.readStringUntil('\n');
+    response = (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 1 
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
     
     // Analyse DevAddr response
@@ -240,8 +284,8 @@ bool LORAE5::join(){
       strDevAddr += ":";
       strDevAddr += response.charAt(index + 9);
       strDevAddr += response.charAt(index + 10);
-      USB_Serial.println("> SUCCESS JOINED OTAA !!!");
-      USB_Serial.println("> DevAddr = " + strDevAddr);
+      SERIAL_D("> SUCCESS JOINED OTAA !!!");
+      SERIAL_D("> DevAddr = " + strDevAddr);
       joined = true;
     }
     // Analyse end of Join procedure
@@ -250,11 +294,11 @@ bool LORAE5::join(){
     }
     // Analyse failed join
     else if ( (index = response.indexOf("Join failed")) != -1 ){
-      USB_Serial.println("> JOIN FAILED ...");
+      SERIAL_D("> JOIN FAILED ...");
       failed = true;
     }
   }  while((!joined || !done) && !failed );
-  USB_Serial.println("");
+  SERIAL_D("");
   return joined;
 }
 
@@ -262,27 +306,27 @@ bool LORAE5::join(){
 /// @param payloadUp is the data to send
 /// @param sizePayloadUp is the size of the data to send
 void LORAE5::sendPayloadUp(uint8_t* payloadUp, uint8_t sizePayloadUp) {
-  USB_Serial.println("Sending " + String(this->confirmed ? "Confirmed " : "Unconfirmed ") + String("Data Up"));
-  USB_Serial.print("- Payload UP   ");
+  SERIAL_D("Sending " + String(this->confirmed ? "Confirmed " : "Unconfirmed ") + String("Data Up"));
+  (this->serialD)->print("- Payload UP   ");
 
   String stringPayloadUp = "";
   for (uint8_t i = 0; i < sizePayloadUp; i++) {
-    USB_Serial.print(" 0x");
+    (this->serialD)->print(" 0x");
     if (payloadUp[i] < 0x10) {
-      USB_Serial.print('0');
+      (this->serialD)->print('0');
       stringPayloadUp += 0;
     }
-    USB_Serial.print(payloadUp[i], HEX);
-    USB_Serial.print(" ");
+    (this->serialD)->print(payloadUp[i], HEX);
+    (this->serialD)->print(" ");
     stringPayloadUp += String(payloadUp[i], HEX);
   }
 
-  USB_Serial.println("");
-  USB_Serial.println("- PortUp\t" + String(this->portUp));
-  USB_Serial.println("- SF\t\t" + String(this->sf));
-  USB_Serial.println("");
+  SERIAL_D("");
+  SERIAL_D("- PortUp\t" + String(this->portUp));
+  SERIAL_D("- SF\t\t" + String(this->sf));
+  SERIAL_D("");
 
-  LoRa_Serial.println("AT+" + String(this->confirmed ? "C" : "") + String("MSGHEX") + String("=") + stringPayloadUp);
+  SERIAL_L("AT+" + String(this->confirmed ? "C" : "") + String("MSGHEX") + String("=") + stringPayloadUp);
 }
 
 /// @brief Allow to manage the sending of uplink data
@@ -292,37 +336,37 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
   bool transmissionDone = false;
   String response;
   uint32_t index;
-  LoRa_Serial.setTimeout(500);
+  (this->serialL)->setTimeout(500);
 
   getSetSF();
   sendPayloadUp(payloadUp, sizePayloadUp);
   do{
-    response = LoRa_Serial.readStringUntil('\n');
+    response = (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 3 
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
 
     if ( (index = response.indexOf("Start")) != -1 ){
-      USB_Serial.println("Transmission Done\nWaiting for Downlink...");
+      SERIAL_D("Transmission Done\nWaiting for Downlink...");
       transmissionDone = true;
     }
 
     if ( (index = response.indexOf("Length error 0")) != -1 ){
-      LoRa_Serial.println("AT+MSG");
+      SERIAL_L("AT+MSG");
     }
 
   } while (!transmissionDone);
   
   if(confirmed == true){
-    response = LoRa_Serial.readStringUntil('\n');
+    response = (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 3 
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
     if ( (index = response.indexOf("Wait ACK")) != -1 ){
-      USB_Serial.println("Waiting for ACK...");
+      SERIAL_D("Waiting for ACK...");
     }
   }
-  USB_Serial.println("");
+  SERIAL_D("");
 }
 
 /// @brief Allow to debug or consume characters from the LoRaE5 module
@@ -332,12 +376,12 @@ void LORAE5::readResponse(uint32_t timeOut, bool debug){
   uint32_t tstart = millis();
 
   while (millis()-tstart < timeOut){
-    if(LoRa_Serial.available() > 0) {
+    if((this->serialL)->available() > 0) {
       if (debug == DEBUG){
-        USB_Serial.print((char)LoRa_Serial.read());
+        (this->serialD)->print((char)(this->serialL)->read());
       }
       else{
-        LoRa_Serial.read();
+        (this->serialL)->read();
       } 
     }       
   }
@@ -355,11 +399,11 @@ bool LORAE5::checkResponse(uint32_t timeOut, char *strCheck, bool debug){
   bool success = false;
 
   while (millis()-tstart < timeOut){
-    if(LoRa_Serial.available() > 0) {
-        c = LoRa_Serial.read();
+    if((this->serialL)->available() > 0) {
+        c = (this->serialL)->read();
         
         if (debug == DEBUG){
-          USB_Serial.print(c);
+          (this->serialD)->print(c);
         }
 
         if( c == strCheck[i] ){
@@ -401,7 +445,7 @@ void LORAE5::getPortDown(String response){
   }
   uint8_t portDown = strPortDown.toInt();
 
-  USB_Serial.println("- Port " + String(portDown));
+  SERIAL_D("- Port " + String(portDown));
   this->portDown = portDown;
 }
 
@@ -426,16 +470,16 @@ void LORAE5::getPayloadDown(uint8_t* payloadDown, uint8_t* sizePayloadDown, Stri
       String strByte =strPayloadDown.substring(i * 2, i * 2 + 2);
       payloadDown[i] = strtoul(strByte.c_str(), nullptr, 16);     
     }
-    USB_Serial.print("- Payload DOWN ");
+    (this->serialD)->print("- Payload DOWN ");
     for (uint8_t i = 0 ; i < *sizePayloadDown ; i++){
-      USB_Serial.print(" 0x");
+      (this->serialD)->print(" 0x");
       if (payloadDown[i] < 0x10){
-        USB_Serial.print('0');
+        (this->serialD)->print('0');
       }
-      USB_Serial.print(payloadDown[i], HEX);
-      USB_Serial.print(" ");
+      (this->serialD)->print(payloadDown[i], HEX);
+      (this->serialD)->print(" ");
     }
-  USB_Serial.println(""); 
+  SERIAL_D(""); 
 }
 
 /// @brief Displays downlink channel
@@ -454,11 +498,11 @@ void LORAE5::getChannelDown(String response){
   uint8_t channelDown = strChannelDown.toInt();
 
   if (channelDown == 0){
-    USB_Serial.println("- Slot RXC");
+    SERIAL_D("- Slot RXC");
   } else {
-    USB_Serial.println("- Slot RX" + String(channelDown));
+    SERIAL_D("- Slot RX" + String(channelDown));
   }
-  USB_Serial.println("");
+  SERIAL_D("");
 }
 
 /// @brief Updates the Device Class
@@ -476,35 +520,35 @@ uint8_t LORAE5::getADR(){
 /// @brief Summarizes device parameters
 void LORAE5::printInfo(){ 
 #ifndef ARDUINO_AVR_LEONARDO
-  USB_Serial.println("# For more information visit : https://github.com/SylvainMontagny/LoRaE5");
+  SERIAL_D("# For more information visit : https://github.com/SylvainMontagny/LoRaE5");
 
-  if(this->mode == OTAA)     {USB_Serial.println("> OTAA");}
-  else                       {USB_Serial.println("> ABP");}
+  if(this->mode == OTAA)     {SERIAL_D("> OTAA");}
+  else                       {SERIAL_D("> ABP");}
 
-  if(this->devClass == CLASS_A) {USB_Serial.println("> CLASS_A");}
-  if(this->devClass == CLASS_C) {USB_Serial.println("> CLASS_C");}
+  if(this->devClass == CLASS_A) {SERIAL_D("> CLASS_A");}
+  if(this->devClass == CLASS_C) {SERIAL_D("> CLASS_C");}
 
-  USB_Serial.println("> SF " + String(this->sf));
+  SERIAL_D("> SF " + String(this->sf));
   
-  if(this->adr == true)           {USB_Serial.println("> ADR  ON");}
-  else                            {USB_Serial.println("> ADR  OFF");}
+  if(this->adr == true)           {SERIAL_D("> ADR  ON");}
+  else                            {SERIAL_D("> ADR  OFF");}
 
-  USB_Serial.println(((this->confirmed == CONF)? String("> Confirmed") : String("> Unconfirmed")));
-  USB_Serial.println("> Port  " + String(this->portUp));
-  USB_Serial.println();
-  USB_Serial.println(  "* DevEUI   0x " + this->devEUI);
+  SERIAL_D(((this->confirmed == CONF)? String("> Confirmed") : String("> Unconfirmed")));
+  SERIAL_D("> Port  " + String(this->portUp));
+  SERIAL_D();
+  SERIAL_D(  "* DevEUI   0x " + this->devEUI);
 
   if (this->mode == ABP) {
-    USB_Serial.println("* DevAddr  0x " + this->devAddr);
-    USB_Serial.println("* NwkSKey  0x " + this->nwkSKey);
-    USB_Serial.println("* AppSKey  0x " + this->appSKey);
+    SERIAL_D("* DevAddr  0x " + this->devAddr);
+    SERIAL_D("* NwkSKey  0x " + this->nwkSKey);
+    SERIAL_D("* AppSKey  0x " + this->appSKey);
   }
 
   if (this->mode == OTAA){
-    USB_Serial.println("* AppKey  0x " + this->appKey);
-    USB_Serial.println("* AppEUI-JoinEUI  0x " + this->appEUI);
+    SERIAL_D("* AppKey  0x " + this->appKey);
+    SERIAL_D("* AppEUI-JoinEUI  0x " + this->appEUI);
   }
-    USB_Serial.println();
+    SERIAL_D();
 #endif
 }
 
@@ -518,12 +562,12 @@ uint8_t LORAE5::awaitForDownlinkClass_A(uint8_t* payloadDown, uint8_t* sizePaylo
   bool isDoneReceived = false;
   bool isAckReceived = false;
  
-  LoRa_Serial.setTimeout(500);
+  (this->serialL)->setTimeout(500);
 
   do{
-    response += LoRa_Serial.readStringUntil('\n');
+    response += (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 4
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
     
     /******        Test Done     *******/
@@ -536,18 +580,18 @@ uint8_t LORAE5::awaitForDownlinkClass_A(uint8_t* payloadDown, uint8_t* sizePaylo
     //Confirmed part
   if ((confirmed == true)){
     if (index = response.indexOf("ACK Received") != -1 ){
-      USB_Serial.println("ACK received");
+      SERIAL_D("ACK received");
       isAckReceived = true;
     }
     else {
-      USB_Serial.println("No ACK received\n");
+      SERIAL_D("No ACK received\n");
       return RET_NO_ACK;
     }
   }
 
   //Processing data received
   if ((index = response.indexOf("PORT: ")) != -1) {
-    USB_Serial.println("Receiving Data Down:");
+    SERIAL_D("Receiving Data Down:");
     getPortDown(response);
     getPayloadDown(payloadDown, sizePayloadDown, response);
     getChannelDown(response);
@@ -555,16 +599,16 @@ uint8_t LORAE5::awaitForDownlinkClass_A(uint8_t* payloadDown, uint8_t* sizePaylo
   }
 
   else if ( ((index = response.indexOf("RXWIN")) != -1) && (isAckReceived == false) ) {
-    USB_Serial.println("MAC command received :");
+    SERIAL_D("MAC command received :");
     getChannelDown(response);
     return RET_NO_DOWNLINK;
   }
   
   else {
     if(isAckReceived == false){
-    USB_Serial.println("No Class_A Data Received.");
+    SERIAL_D("No Class_A Data Received.");
     }
-    USB_Serial.println();
+    SERIAL_D();
     return RET_NO_DOWNLINK;
   }
 
@@ -580,20 +624,20 @@ uint8_t LORAE5::awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePaylo
   bool isDoneReceived = false;
   uint32_t startTime = millis();
 
-  LoRa_Serial.setTimeout(500);
+  (this->serialL)->setTimeout(500);
 
 #ifndef ARDUINO_AVR_LEONARDO 
   if( this->SEND_BY_PUSH_BUTTON == true ){
-    USB_Serial.println("> Press 't' or receive a downlink.\n");
+    SERIAL_D("> Press 't' or receive a downlink.\n");
   }else if( this->SEND_BY_PUSH_BUTTON == false ){
-     USB_Serial.println("> Press 't', receive a downlink or wait " + String(this->FRAME_DELAY) + String(" ms.\n"));
+     SERIAL_D("> Press 't', receive a downlink or wait " + String(this->FRAME_DELAY) + String(" ms.\n"));
   }
 #endif
 
   do{
-    response += LoRa_Serial.readStringUntil('\n');
+    response += (this->serialL)->readStringUntil('\n');
     #if DEBUG_LEVEL == 4
-    USB_Serial.println(response);  // DEBUG
+    SERIAL_D(response);  // DEBUG
     #endif
     
     /******        Test Done     *******/
@@ -602,18 +646,18 @@ uint8_t LORAE5::awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePaylo
     }
 
     /******    Test 't' : transmission request  *******/
-    if ( USB_Serial.available() > 0 ) {
-      char userInput = USB_Serial.read(); 
+    if ( (this->serialD)->available() > 0 ) {
+      char userInput = (this->serialD)->read(); 
       if (userInput == 't' || userInput == 'T') {
-        USB_Serial.println("# User input 't'.\n");
+        SERIAL_D("# User input 't'.\n");
         return RET_T;
       }
     }
 
     /******    Test Timeout  *******/
     if ((this->SEND_BY_PUSH_BUTTON == false) && ((millis() - startTime) >= (this->FRAME_DELAY))){
-        USB_Serial.println("No Class_C Data Received.\n");
-        USB_Serial.println("# Timeout reached.\n");
+        SERIAL_D("No Class_C Data Received.\n");
+        SERIAL_D("# Timeout reached.\n");
         return RET_TIMEOUT;
     }
 
@@ -621,7 +665,7 @@ uint8_t LORAE5::awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePaylo
 
     //Processing data received
   if ((index = response.indexOf("PORT: ")) != -1) {
-    USB_Serial.println("Receiving Data Down:");
+    SERIAL_D("Receiving Data Down:");
     getPortDown(response);
     getPayloadDown(payloadDown, sizePayloadDown, response);
     getChannelDown(response);
@@ -633,39 +677,39 @@ uint8_t LORAE5::awaitForDownlinkClass_C(uint8_t* payloadDown, uint8_t* sizePaylo
 /// @return Downlink data information (RET_T/RET_TIMEOUT)
 uint8_t LORAE5::sleep(){
   uint32_t startTime = millis();
-  LoRa_Serial.println("AT+LOWPOWER");
-  String response = LoRa_Serial.readStringUntil('\n');
+  SERIAL_L("AT+LOWPOWER");
+  String response = (this->serialL)->readStringUntil('\n');
   readResponse(5, NO_DEBUG);
 
   if (this->SEND_BY_PUSH_BUTTON == false) {
     while((millis() - startTime) < (this->FRAME_DELAY)){
-      if (USB_Serial.available() > 0) {
-        char userInput = USB_Serial.read(); 
+      if ((this->serialD)->available() > 0) {
+        char userInput = (this->serialD)->read(); 
         if (userInput == 't' || userInput == 'T') {
-          LoRa_Serial.println("WAKE-UP");
-          response = LoRa_Serial.readStringUntil('\n');
+          SERIAL_L("WAKE-UP");
+          response = (this->serialL)->readStringUntil('\n');
           readResponse(5,NO_DEBUG);
-          USB_Serial.println("# User input 't'.\n");
+          SERIAL_D("# User input 't'.\n");
           return RET_T;
         }
       }
     }
-    LoRa_Serial.println("WAKE-UP");
-    response = LoRa_Serial.readStringUntil('\n');
+    SERIAL_L("WAKE-UP");
+    response = (this->serialL)->readStringUntil('\n');
     readResponse(5,NO_DEBUG);
-    USB_Serial.println("# Timeout reached.\n");
+    SERIAL_D("# Timeout reached.\n");
     return RET_TIMEOUT;
   } else {
     bool userTest = false;
     while (userTest == false){
-    if (USB_Serial.available() > 0) {
-        char userInput = USB_Serial.read(); 
+    if ((this->serialD)->available() > 0) {
+        char userInput = (this->serialD)->read(); 
         if (userInput == 't' || userInput == 'T') {
-          LoRa_Serial.println("WAKE-UP");
-          response = LoRa_Serial.readStringUntil('\n');
+          SERIAL_L("WAKE-UP");
+          response = (this->serialL)->readStringUntil('\n');
           readResponse(5,NO_DEBUG);
           userTest = true;
-          USB_Serial.println("# User input 't'.\n");
+          SERIAL_D("# User input 't'.\n");
           return RET_T;
         }
       }
@@ -678,18 +722,18 @@ void LORAE5::setFrequencyBand(){
   String response;
 
   if ((this->region) == EU868){
-    LoRa_Serial.println("AT+DR=EU868");
-    response = LoRa_Serial.readStringUntil('\n');
+    SERIAL_L("AT+DR=EU868");
+    response = (this->serialL)->readStringUntil('\n');
   }
 
   if ((this->region) == US915){
-    LoRa_Serial.println("AT+DR=US915");
-    response = LoRa_Serial.readStringUntil('\n');
+    SERIAL_L("AT+DR=US915");
+    response = (this->serialL)->readStringUntil('\n');
   }
     
   #if DEBUG_LEVEL == 5
-  LoRa_Serial.println("AT+CH");
-  response = LoRa_Serial.readStringUntil('\n');
-  USB_Serial.println(response);
+  SERIAL_L("AT+CH");
+  response = (this->serialL)->readStringUntil('\n');
+  SERIAL_D(response);
   #endif
 }
