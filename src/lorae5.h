@@ -88,7 +88,7 @@ private:
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
-    void          setup(uint8_t band, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
+    void          setup(uint8_t band, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY, uint8_t RX_pin, uint8_t TX_pin);
     void          printInfo();
 
     bool          join(void);
