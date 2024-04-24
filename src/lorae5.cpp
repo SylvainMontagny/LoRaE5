@@ -20,7 +20,7 @@ LORAE5::LORAE5(String devEUI, String appEUI, String appKey, String devAddr, Stri
 /// @param portUp is the uplink port selected by the user
 /// @param SEND_BY_PUSH_BUTTON is the push button condition selected by the user
 /// @param FRAME_DELAY is the frame delay selected by the user
-void LORAE5::setup(uint8_t region, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confirmed, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY,RX_pin, TX_pin){
+void LORAE5::setup(uint8_t region, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool confirmed, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY,uint8_t RX_pin, uint8_t TX_pin){
   unsigned long startTime = millis();
   LoRa_Serial.begin(9600, SERIAL_8N1, RX_pin, TX_pin);
   USB_Serial.begin(115200);
