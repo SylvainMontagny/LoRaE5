@@ -1,21 +1,17 @@
-# Changelog
-#### File: LoRaE5
+# Library Changelog
 #### Author: Sylvain Montagny & Dorian Desserey
 
 
 ## Knows limitation
-* Tested on "EU868" & "US915".
-* Tested compatibility only with: 
-1. "Leonardo", "Zero" and "Due" Arduino boards,
-2. "ESP32_DevKitc_V4" Espressif board,
-3. "F446RE" and "L073RZ" Nucleo boards,
-4. "Wio Terminal" Seeed board,
+* Tested on "EU868" & "US915" only.
 * "LoRaWAN modem is busy" message may occurs for Class C/ABP.
+
+
 
 ## Version: V3.0.0 | 2024-05-14
 
 ### Added
-- A “config_board.h” header to manage several defined boards and allow you to choose the serial configuration for the others.
+- A “config_board.h” header file has been added to to manage the serial configuration (Debug and LoRa Module connection).
 - Implement a setup_hardware() method.
 
 ### Modified
