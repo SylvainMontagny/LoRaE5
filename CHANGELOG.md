@@ -6,7 +6,11 @@
 * Tested on "EU868" & "US915" only.
 * "LoRaWAN modem is busy" message may occurs for Class C/ABP.
 
+## Version: V3.0.1 | 2024-05-24
 
+### Added
+- Possibility of selecting all Regions supported by the loraE5 module.
+- UART pin list for known boards.
 
 ## Version: V3.0.0 | 2024-05-14
 

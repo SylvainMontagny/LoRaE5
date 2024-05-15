@@ -3,6 +3,18 @@
 
 #define EU868                   0
 #define US915                   1
+#define CN779                   2
+#define EU433                   3
+#define AU915                   4
+#define CN470                   5
+#define AS923                   6
+#define KR920                   7
+#define IN865                   8
+#define RU864                   9
+#define CN470PREQUEL            10
+#define STE920                  11
+#define US915HYBRID             12
+#define AU915OLD                13
 
 #define ABP                     0 
 #define OTAA     		            1

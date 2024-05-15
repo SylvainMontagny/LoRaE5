@@ -133,13 +133,14 @@ void LORAE5::setClass(uint8_t devClass){
 /// @param sf is the Spreading factor selected by the user
 void LORAE5::setSF(uint8_t sf){
   this->sf = sf;
-  if ((this->region) == EU868){
+  if ((this->region) == EU868 || (this->region) == CN779 || (this->region) == EU433 || (this->region) == AU915 || (this->region) == CN470 || (this->region) == AS923 || (this->region) == KR920 || (this->region) == IN865 || (this->region) == RU864 || (this->region) == CN470PREQUEL || (this->region) == STE920){ 
   SERIAL_L("AT+DR=DR" + String(-sf+12));
   }
-  if ((this->region) == US915){
+
+  if ((this->region) == US915 || (this->region) == US915HYBRID || (this->region) == AU915OLD){
   SERIAL_L("AT+DR=DR" + String(-sf+10));
   }
-  
+
   String response = (this->serialL)->readStringUntil('\n');
   readResponse(400,NO_DEBUG);   
 }
@@ -160,7 +161,7 @@ void LORAE5::getSetSF(){
     #endif
   }
 
-  if ((this->region) == EU868){
+  if ((this->region) == EU868 || (this->region) == CN779 || (this->region) == EU433 || (this->region) == AU915 || (this->region) == CN470 || (this->region) == AS923 || (this->region) == KR920 || (this->region) == IN865 || (this->region) == RU864 || (this->region) == CN470PREQUEL || (this->region) == STE920){
         if ( response.indexOf("DR0") != -1 )   this->sf = 12;
   else  if ( response.indexOf("DR1") != -1 )   this->sf = 11;  
   else  if ( response.indexOf("DR2") != -1 )   this->sf = 10;    
@@ -169,7 +170,7 @@ void LORAE5::getSetSF(){
   else  if ( response.indexOf("DR5") != -1 )   this->sf = 7;
   }
 
-  if ((this->region) == US915){
+  if ((this->region) == US915 || (this->region) == US915HYBRID || (this->region) == AU915OLD){
         if ( response.indexOf("DR0") != -1 )   this->sf = 10;
   else  if ( response.indexOf("DR1") != -1 )   this->sf = 9;
   else  if ( response.indexOf("DR2") != -1 )   this->sf = 8;
@@ -353,6 +354,10 @@ void LORAE5::sendData(uint8_t* payloadUp, uint8_t sizePayloadUp){
 
     if ( (index = response.indexOf("Length error 0")) != -1 ){
       SERIAL_L("AT+MSG");
+    }
+
+    if ( (index = response.indexOf("LoRaWAN modem is busy")) != -1 ){
+      SERIAL_D("LoRaWAN modem is busy");
     }
 
   } while (!transmissionDone);
@@ -730,7 +735,67 @@ void LORAE5::setFrequencyBand(){
     SERIAL_L("AT+DR=US915");
     response = (this->serialL)->readStringUntil('\n');
   }
-    
+  
+  if ((this->region) == US915HYBRID){
+    SERIAL_L("AT+DR=US915HYBRID");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == CN779){
+    SERIAL_L("AT+DR=CN779");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == EU433){
+    SERIAL_L("AT+DR=EU433");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == AU915){
+    SERIAL_L("AT+DR=AU915");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == AU915OLD){
+    SERIAL_L("AT+DR=AU915");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == CN470){
+    SERIAL_L("AT+DR=CN470");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == CN470PREQUEL){
+    SERIAL_L("AT+DR=CN470");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == AS923){
+    SERIAL_L("AT+DR=AS923");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == KR920){
+    SERIAL_L("AT+DR=KR920");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == IN865){
+    SERIAL_L("AT+DR=IN865");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == RU864){
+    SERIAL_L("AT+DR=RU864");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
+  if ((this->region) == STE920){
+    SERIAL_L("AT+DR=STE920");
+    response = (this->serialL)->readStringUntil('\n');
+  }
+
   #if DEBUG_LEVEL == 5
   SERIAL_L("AT+CH");
   response = (this->serialL)->readStringUntil('\n');
