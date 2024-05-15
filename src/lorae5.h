@@ -1,6 +1,5 @@
-#include <stdint.h>
-#define USB_Serial    Serial
-#define LoRa_Serial   Serial1
+#define SERIAL_D(x)   this->serialD->println(x)
+#define SERIAL_L(x)   this->serialL->println(x)
 
 #define EU868                   0
 #define US915                   1
@@ -28,7 +27,7 @@
 #define UNCONF                  false
 
 #define _HEXA                   0
-#define _STRING                 1                                       
+#define _STRING                 1
 
 enum RETURN { RET_DOWNLINK, RET_NO_DOWNLINK, RET_NO_ACK, RET_T, RET_TIMEOUT };
 
@@ -46,6 +45,18 @@ private:
     bool          confirmed;
     uint8_t       portUp;
     uint8_t       portDown;
+
+#if defined(ARDUINO_AVR_LEONARDO) || defined(ARDUINO_WIO_TERMINAL)
+    Serial_* serialD;
+#else
+    HardwareSerial* serialD;
+#endif
+
+#if defined(ARDUINO_WIO_TERMINAL)
+    Uart* serialL;
+#else
+    HardwareSerial* serialL;
+#endif
 
     String        devEUI;         
     String        devAddr;        
@@ -88,8 +99,17 @@ private:
     
 public:
                   LORAE5(String devEUI, String appEUI, String appKey, String devAddr, String nwkSKey, String appSKey);
-    void          setup(uint8_t band, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
-    void          printInfo();
+
+#if defined(ARDUINO_AVR_LEONARDO)
+    void          setup_hardware(Serial_* myDebugSerial, HardwareSerial* myLoRaSerial);
+#elif defined(ARDUINO_WIO_TERMINAL)
+void          setup_hardware(Serial_* myDebugSerial, Uart* myLoRaSerial);
+#else
+    void          setup_hardware(HardwareSerial* myDebugSerial, HardwareSerial* myLoRaSerial);
+#endif
+
+    void          setup_lorawan(uint8_t band, bool mode, uint8_t devClass, uint8_t sf, bool adr, bool messageType, uint8_t portUp, bool SEND_BY_PUSH_BUTTON, uint32_t FRAME_DELAY);
+    void          printInfo(void);
 
     bool          join(void);
 

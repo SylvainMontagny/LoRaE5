@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "lorae5.h"
 #include "config_application.h"
+#include "config_board.h"
 
 uint8_t sizePayloadUp = 4;
 uint8_t sizePayloadDown = 0;
@@ -21,11 +22,12 @@ State currentState = State::SEND_DATA;
 /***********************************************************************/
 
 void setup() {
-  lorae5.setup(REGION, ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
+  lorae5.setup_hardware(&Debug_Serial, &LoRa_Serial);
+  lorae5.setup_lorawan(REGION, ACTIVATION_MODE, CLASS, SPREADING_FACTOR, ADAPTIVE_DR, CONFIRMED, PORT_UP, SEND_BY_PUSH_BUTTON, FRAME_DELAY);
   lorae5.printInfo();
 
   if(ACTIVATION_MODE == OTAA){
-    USB_Serial.println("Join Procedure in progress...");
+    Debug_Serial.println("Join Procedure in progress...");
     while(lorae5.join() == false);
     delay(2000);
    }
