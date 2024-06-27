@@ -11,10 +11,10 @@ Savoie Mont Blanc University provides many educationnal ressources about LoRaWAN
 
 # 2. About this Arduino library
 This library has been tested with the following boards: 
-1. Legacy Arduino : **Leonardo**, **Uno** **Zero**, **Due**.
-2. ESP32 Espressif
+1. Legacy Arduino : **Leonardo**, **Uno**, **Zero**, **Due**.
+2. ESP32 Espressif.
 3. STM32 Nucleo Boards : **NUCLEO_F446**, **NUCLEO_L073**, **NUCLEO_F411RE**, **NUCLEO_L433RC-P**, **NUCLEO_WL55JC1**, **NUCLEO_G031K8**, **NUCLEO_F746ZG**.
-4. Seed Studio: **Wio Terminal**.
+4. Seeed Studio: **Wio Terminal**.
 
 :bulb: If you've tested this library with any other boards than the one listed we would be happy to have your feedback :
 - Report an [issue on github](https://github.com/SylvainMontagny/LoRaE5/issues/new) (label **"Test board failure"**) in case of **failure**.

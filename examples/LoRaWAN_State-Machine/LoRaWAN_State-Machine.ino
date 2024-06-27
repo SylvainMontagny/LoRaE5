@@ -50,7 +50,7 @@ void loop() {
             break;
           
           case RET_NO_DOWNLINK:
-            currentState = State::PROCESS_DOWNLINK;
+            currentState = State::SLEEP;
             break;
 
           case RET_NO_ACK:

@@ -757,7 +757,7 @@ void LORAE5::setFrequencyBand(){
   }
 
   if ((this->region) == AU915OLD){
-    SERIAL_L("AT+DR=AU915");
+    SERIAL_L("AT+DR=AU915OLD");
     response = (this->serialL)->readStringUntil('\n');
   }
 
@@ -767,7 +767,7 @@ void LORAE5::setFrequencyBand(){
   }
 
   if ((this->region) == CN470PREQUEL){
-    SERIAL_L("AT+DR=CN470");
+    SERIAL_L("AT+DR=CN470PREQUEL");
     response = (this->serialL)->readStringUntil('\n');
   }
 
