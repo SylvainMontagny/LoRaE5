@@ -8,7 +8,7 @@
     #define Debug_Serial      Serial    // Select the right SerialX for Debug
 
     // Arduino's Serial Documentation : https://www.arduino.cc/reference/en/language/functions/communication/serial/
-    // ESP32 Documentation
+    // ESP32 Documentation : https://microcontrollerslab.com/esp32-uart-communication-pins-example/
     #define LoRa_Serial       Serial1   // Select the right SerialX for the LoRaE5 connection
 
 //////////////////////////////////////////////
