@@ -4,7 +4,9 @@ Savoie Mont Blanc University provides many educationnal ressources about LoRaWAN
 
 :notebook: One free ebook available here: [LoRaWAN for beginners books](https://www.univ-smb.fr/lorawan/en/free-book/)
 
-:tv: E-learning platform available here: [LoRaWAN for beginners videos](https://www.udemy.com/course/lora-lorawan-internet-of-things/?referralCode=21DED0F1021F4E261955)
+:tv: E-learning platform for beginners available here: [LoRaWAN for beginners videos](https://www.udemy.com/course/lora-lorawan-internet-of-things/?referralCode=21DED0F1021F4E261955)
+
+:tv: E-learning platform for Advanced users here: [LoRaWAN for Advanced users videos](https://www.udemy.com/course/lorawan-for-advanced-users/?referralCode=BA4A670560916E1AED77)
 
 :bulb: 2 days training sessions available here: [LoRaWAN and IoT Training](https://www.univ-smb.fr/lorawan/avada_portfolio/formation-distanciel/)
 
@@ -56,7 +58,7 @@ This library works with any boards with two serial ports (or one USB + one Seria
 
 
 ## 2.3. How to use this library
-
+- Open one of the example program in **File > Examples > LoRaWAN-Seed-Groove-Wio-E5**.
 - Set up the LoRaWAN parameters in **config_application.h** file. If you use ABP, you need to configure devAdddr, nwkSKey and appSKey. If you use OTAA you need to configure devEUI, appEUI and appKey.
 - Set up the hardware parameters in **config_board.h** file. Choose the right setting for your board (Serial or Pins).
 - Register your Device on a Network Server (TTN, Actility, LORIOT, ...)
